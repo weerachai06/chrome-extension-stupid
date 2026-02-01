@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debounce Network</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div id="app" class="popup-container">
+    <!-- Header -->
+    <div class="popup-header">
+      <h1>🔌 Debounce Network</h1>
+      <p class="subtitle">Network Request Manager</p>
+    </div>
+    <!-- Settings Tab (Only Tab) -->
+    <div id="settings" class="tab-content active">
+      <div class="settings-wrapper">
+        <div class="section-header">
+          <h2>⚙️ Debounce Settings</h2>
+        </div>
+        <div class="settings-group">
+          <div class="setting-item">
+            <div class="setting-label">
+              <label for="debounceUrls">🔗 REST URLs to Debounce</label>
+              <span class="setting-desc">Enter URLs (one per line) or leave empty to debounce all</span>
+            </div>
+            <textarea id="debounceUrls" placeholder="https://api.example.com/endpoint&#10;https://api.example.com/data" rows="4" class="setting-textarea"></textarea>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-label">
+              <label for="debounceGraphqlOps">🔷 GraphQL Operations to Debounce</label>
+              <span class="setting-desc">Enter operation names (one per line) or leave empty to debounce all</span>
+            </div>
+            <textarea id="debounceGraphqlOps" placeholder="getUsers&#10;createPost" rows="4" class="setting-textarea"></textarea>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-label">
+              <label for="debounceDelay">⏱️ Debounce Delay (ms)</label>
+              <span class="setting-desc">Milliseconds to wait before processing</span>
+            </div>
+            <input type="number" id="debounceDelay" min="0" max="10000" value="300" class="setting-input" />
+          </div>
+        </div>
+        <button id="saveSettingsBtn" class="btn btn-primary">💾 Save Settings</button>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,42 @@
+{
+  "extensionName": {
+    "message": "Debounce Network",
+    "description": "The name of the application"
+  },
+  "extensionDescription": {
+    "message": "REST and GraphQL network request debugger with automatic debouncing",
+    "description": "The description of the application"
+  },
+  "requestsTab": {
+    "message": "Requests",
+    "description": "Requests tab label"
+  },
+  "settingsTab": {
+    "message": "Settings",
+    "description": "Settings tab label"
+  },
+  "requestType": {
+    "message": "Request Type",
+    "description": "Request type label"
+  },
+  "url": {
+    "message": "URL",
+    "description": "URL label"
+  },
+  "method": {
+    "message": "Method",
+    "description": "HTTP method label"
+  },
+  "status": {
+    "message": "Status",
+    "description": "Response status label"
+  },
+  "duration": {
+    "message": "Duration (ms)",
+    "description": "Request duration label"
+  },
+  "noRequests": {
+    "message": "No requests captured yet",
+    "description": "Empty state message"
+  }
+}

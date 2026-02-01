@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title i18n-content="extensionName">Debounce Network</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 i18n-content="extensionName">Debounce Network</h1>
+        <button id="clearBtn" class="btn btn-icon" title="Clear all requests">🗑️</button>
+      </header>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="requests">
+          <span i18n-content="requestsTab">Requests</span>
+        </button>
+        <button class="tab-btn" data-tab="test">
+          <span i18n-content="testTab">Test</span>
+        </button>
+        <button class="tab-btn" data-tab="settings">
+          <span i18n-content="settingsTab">Settings</span>
+        </button>
+      </div>
+
+      <!-- Requests Tab -->
+      <div id="requests" class="tab-content active">
+        <div class="request-list">
+          <div id="requestsContainer" class="requests-container">
+            <div class="empty-state">
+              <p i18n-content="noRequests">No requests captured yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Tab -->
+      <div id="test" class="tab-content">
+        <div class="test-panel">
+          <div class="test-section">
+            <h3>REST Request</h3>
+            <div class="form-group">
+              <label i18n-content="method">Method</label>
+              <select id="restMethod">
+                <option>GET</option>
+                <option>POST</option>
+                <option>PUT</option>
+                <option>DELETE</option>
+                <option>PATCH</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label i18n-content="url">URL</label>
+              <input type="text" id="restUrl" placeholder="https://api.example.com/users" />
+            </div>
+            <div class="form-group">
+              <label>Body (JSON)</label>
+              <textarea id="restBody" placeholder='{"name": "John"}'></textarea>
+            </div>
+            <button id="sendRestBtn" class="btn btn-primary">Send REST Request</button>
+          </div>
+
+          <div class="test-section">
+            <h3>GraphQL Request</h3>
+            <div class="form-group">
+              <label i18n-content="url">URL</label>
+              <input type="text" id="graphqlUrl" placeholder="https://api.example.com/graphql" />
+            </div>
+            <div class="form-group">
+              <label>Query</label>
+              <textarea id="graphqlQuery" placeholder='query GetUser { user(id: 1) { id name } }'></textarea>
+            </div>
+            <div class="form-group">
+              <label>Variables (JSON)</label>
+              <textarea id="graphqlVariables" placeholder='{"id": 1}'></textarea>
+            </div>
+            <button id="sendGraphQLBtn" class="btn btn-primary">Send GraphQL Request</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="settings" class="tab-content">
+        <div class="settings-panel">
+          <div class="settings-group">
+            <label for="debounceDelay">
+              <span>Debounce Delay (ms)</span>
+              <input type="number" id="debounceDelay" min="0" max="5000" value="300" />
+            </label>
+          </div>
+          <div class="settings-group">
+            <label for="enableLogging">
+              <input type="checkbox" id="enableLogging" checked />
+              <span>Enable Logging</span>
+            </label>
+          </div>
+          <button id="saveSettingsBtn" class="btn btn-primary">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

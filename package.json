@@ -1,0 +1,24 @@
+{
+  "name": "debounce-network-extension",
+  "version": "1.0.0",
+  "description": "REST and GraphQL network request debugger with automatic debouncing",
+  "private": true,
+  "scripts": {
+    "dev": "webpack --mode development --watch",
+    "build": "webpack --mode production",
+    "test": "jest",
+    "lint": "biome lint src",
+    "format": "biome format --write src"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.6.0",
+    "@types/chrome": "^0.0.260",
+    "@types/node": "^20.19.30",
+    "copy-webpack-plugin": "^11.0.0",
+    "ts-loader": "^9.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.0"
+  }
+}
