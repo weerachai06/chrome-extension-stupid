@@ -9,20 +9,13 @@ import { logger } from "../utils/logger";
 // Message types for communication with popup and content scripts
 type MessageRequest = {
   type:
-    | "make-rest-request"
-    | "make-graphql-request"
-    | "get-requests"
-    | "clear-requests"
-    | "delete-request"
     | "settings-updated"
-    | "DEBOUNCE_FETCH_REQUEST"
-    | "DEBOUNCE_XHR_REQUEST"
-    | "GET_SETTINGS";        // Added GET_SETTINGS
+    | "GET_SETTINGS";
   payload?: unknown;
 };
 
 type MessageResponse = {
-  settings?: DebounceSettings; // Made optional as not all responses include settings
+  settings?: DebounceSettings;
   success?: boolean;
   data?: unknown;
 };
@@ -51,16 +44,12 @@ async function initializeExtension(): Promise<void> {
  */
 async function handleMessage(request: MessageRequest): Promise<MessageResponse> {
   try {
-    if (request.type === "GET_SETTINGS") {
+    if (request.type === "GET_SETTINGS" || request.type === "settings-updated") {
       const settings = await loadSettings();
       return { settings };
     }
     
-    // For other messages, we might just want to return the current settings for context
-    // or handle specific logic.
-    // Preserving original behavior of returning settings for now, but explicit handling is better.
-    const settings = await loadSettings();
-    return { settings };
+    return { success: false };
   } catch (error) {
     logger.error("Error handling message", error);
     return { success: false };

@@ -48,6 +48,4 @@ export const logger = {
   info: (message: string, data?: unknown) => log("info", message, data),
   warn: (message: string, data?: unknown) => log("warn", message, data),
   error: (message: string, data?: unknown) => log("error", message, data),
-  getLogs: () => [...logs],
-  clearLogs: () => logs.splice(0, logs.length),
 };
