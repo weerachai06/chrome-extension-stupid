@@ -16,7 +16,8 @@
     "resolveJsonModule": true,
     "moduleResolution": "nodenext",
     "allowSyntheticDefaultImports": true,
-    "types": ["chrome", "node"]
+    "types": ["chrome", "node", "jest"],
+    "isolatedModules": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

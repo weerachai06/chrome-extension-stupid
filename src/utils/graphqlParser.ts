@@ -25,12 +25,14 @@ export function parseGraphQLRequest(body: string): GraphQLRequest | null {
 }
 
 function findOperationName(query: string): string | null {
-  // Match operation name: (query|mutation|subscription) OperationName
-  // Handles whitespace variations
-  const match = query.match(/^\s*(query|mutation|subscription)\s+(\w+)/im);
+  if (!query) return null;
   
-  if (match?.[2]) {
-    return match[2];
+  // Match operation name: (query|mutation|subscription) OperationName
+  // Handles whitespace variations and multiline
+  const match = query.match(/^\s*(?:query|mutation|subscription)\s+([a-zA-Z0-9_]+)/i);
+  
+  if (match?.[1]) {
+    return match[1];
   }
 
   return null;
@@ -62,11 +64,12 @@ export function getOperationName(body: string): string | null {
     return parsedQuery.operationName;
   }
   
-  if(!parsedQuery?.query) {
-    return null;
-  }
+  // If parseGraphQLRequest returned null because it's not valid JSON,
+  // or if it's valid JSON but operationName is missing, try parsing the query string.
+  // We use the raw body as a fallback for findOperationName.
+  const queryToParse = parsedQuery?.query || body;
 
-  return findOperationName(parsedQuery.query);
+  return findOperationName(queryToParse);
 }
 
 /**

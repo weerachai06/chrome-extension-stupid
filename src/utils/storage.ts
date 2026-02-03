@@ -20,7 +20,8 @@ const SETTINGS_KEY = 'debounceSettings';
  */
 export function saveSettings(settings: DebounceSettings): Promise<void> {
   return new Promise((resolve) => {
-    chrome.storage.local.set({ [SETTINGS_KEY]: settings }, () => {
+    const storage = typeof chrome !== 'undefined' ? chrome.storage : (window as any).chrome?.storage;
+    storage.local.set({ [SETTINGS_KEY]: settings }, () => {
       resolve();
     });
   });
@@ -31,7 +32,8 @@ export function saveSettings(settings: DebounceSettings): Promise<void> {
  */
 export function loadSettings(): Promise<DebounceSettings> {
   return new Promise((resolve) => {
-    chrome.storage.local.get([SETTINGS_KEY], (result) => {
+    const storage = typeof chrome !== 'undefined' ? chrome.storage : (window as any).chrome?.storage;
+    storage.local.get([SETTINGS_KEY], (result: any) => {
       const defaultSettings: DebounceSettings = {
         restUrls: [],
         graphqlOperations: [],
