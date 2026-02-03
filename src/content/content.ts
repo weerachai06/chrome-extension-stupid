@@ -3,26 +3,22 @@
  * Injected into page context to intercept network activity
  */
 
-import { DebounceSettings } from "../utils/indexedDB";
+import { DebounceSettings } from "../utils/storage";
 
 /**
  * Setup content script communication with background
  * Listens for messages from injected script
  */
-// window.addEventListener("message", (event) => {
-//   if (event.source !== window) return;
-
-//   const message = event.data;
-
-//   console.log("[Debounce Content] Received message:", message);
-// });
-
 window.addEventListener("message", (event) => {
+  // Only accept messages from the same window
+  if (event.source !== window) return;
+
   if (event.data.type === "GET_SETTINGS") {
+    // Request settings from background script
     chrome.runtime.sendMessage(
-      event.data.workerMessage,
+      { type: "GET_SETTINGS" },
       (response: { settings: DebounceSettings }) => {
-        // Send response back if needed
+        // Send response back to injected script
         window.postMessage(
           {
             type: "SETTINGS_RESPONSE",

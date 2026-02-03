@@ -3,7 +3,7 @@
  * Handles request interception, storage, and communication with popup
  */
 
-import { DebounceSettings, loadSettings } from "../utils/indexedDB";
+import { DebounceSettings, loadSettings } from "../utils/storage";
 import { logger } from "../utils/logger";
 
 // Message types for communication with popup and content scripts
@@ -16,19 +16,21 @@ type MessageRequest = {
     | "delete-request"
     | "settings-updated"
     | "DEBOUNCE_FETCH_REQUEST"
-    | "DEBOUNCE_XHR_REQUEST";
+    | "DEBOUNCE_XHR_REQUEST"
+    | "GET_SETTINGS";        // Added GET_SETTINGS
   payload?: unknown;
 };
 
 type MessageResponse = {
-  settings: DebounceSettings;
+  settings?: DebounceSettings; // Made optional as not all responses include settings
+  success?: boolean;
+  data?: unknown;
 };
 
 /**
  * Initialize extension
  */
 async function initializeExtension(): Promise<void> {
-  const settings = await loadSettings();
   logger.info("Service Worker initialized");
 
   // Set up message listener
@@ -38,11 +40,31 @@ async function initializeExtension(): Promise<void> {
       _sender,
       sendResponse: (response: MessageResponse) => void,
     ) => {
-      sendResponse({ settings });
-      // Return true to indicate response will be sent asynchronously
-      return true;
+      handleMessage(request).then(sendResponse);
+      return true; // Return true to indicate response will be sent asynchronously
     },
   );
+}
+
+/**
+ * Handle incoming messages
+ */
+async function handleMessage(request: MessageRequest): Promise<MessageResponse> {
+  try {
+    if (request.type === "GET_SETTINGS") {
+      const settings = await loadSettings();
+      return { settings };
+    }
+    
+    // For other messages, we might just want to return the current settings for context
+    // or handle specific logic.
+    // Preserving original behavior of returning settings for now, but explicit handling is better.
+    const settings = await loadSettings();
+    return { settings };
+  } catch (error) {
+    logger.error("Error handling message", error);
+    return { success: false };
+  }
 }
 
 /**
@@ -60,7 +82,6 @@ if (chrome.runtime.onInstalled) {
   chrome.runtime.onInstalled.addListener((details) => {
     if (details.reason === "install") {
       logger.info("Extension installed");
-      // Open installation page or show welcome message
     } else if (details.reason === "update") {
       logger.info("Extension updated");
     }

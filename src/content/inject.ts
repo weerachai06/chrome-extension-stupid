@@ -4,7 +4,7 @@
  */
 
 import { getOperationName } from "../utils/graphqlParser";
-import { DebounceSettings, loadSettings } from "../utils/indexedDB";
+import { DebounceSettings } from "../utils/storage";
 
 // Store original functions
 const originalFetch = window.fetch;
@@ -59,7 +59,6 @@ window.fetch = function (
   // Return a Promise that handles async logic internally
   return (async () => {
     try {
-      // Load settings from IndexedDB
       const { debounceDelay, shouldDebounce } = configureFetchOptions({
         url,
         body: init.body,

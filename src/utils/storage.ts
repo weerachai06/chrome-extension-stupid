@@ -1,7 +1,62 @@
 /**
- * Request storage and management
- * Handles persisting and retrieving network requests
+ * Storage Helper for Debounce Network Extension
+ * Uses chrome.storage.local for persisting settings and request logs
  */
+
+// ==========================================
+// Settings Storage
+// ==========================================
+
+export interface DebounceSettings {
+  restUrls: string[];
+  graphqlOperations: string[];
+  debounceDelay: number;
+}
+
+const SETTINGS_KEY = 'debounceSettings';
+
+/**
+ * Save debounce settings to chrome.storage.local
+ */
+export function saveSettings(settings: DebounceSettings): Promise<void> {
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ [SETTINGS_KEY]: settings }, () => {
+      resolve();
+    });
+  });
+}
+
+/**
+ * Load debounce settings from chrome.storage.local
+ */
+export function loadSettings(): Promise<DebounceSettings> {
+  return new Promise((resolve) => {
+    chrome.storage.local.get([SETTINGS_KEY], (result) => {
+      const defaultSettings: DebounceSettings = {
+        restUrls: [],
+        graphqlOperations: [],
+        debounceDelay: 0,
+      };
+      
+      resolve(result[SETTINGS_KEY] || defaultSettings);
+    });
+  });
+}
+
+/**
+ * Clear all settings from chrome.storage.local
+ */
+export function clearSettings(): Promise<void> {
+  return new Promise((resolve) => {
+    chrome.storage.local.remove(SETTINGS_KEY, () => {
+      resolve();
+    });
+  });
+}
+
+// ==========================================
+// Request Logging Storage
+// ==========================================
 
 export interface StoredRequest {
   id: string;
@@ -15,7 +70,7 @@ export interface StoredRequest {
   response: unknown;
 }
 
-const STORAGE_KEY = "debounce_network_requests";
+const REQUESTS_KEY = "debounce_network_requests";
 const MAX_STORED_REQUESTS = 100;
 
 /**
@@ -31,16 +86,16 @@ function generateRequestId(): string {
  */
 export async function storeRequest(request: StoredRequest): Promise<void> {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.get([STORAGE_KEY], (result) => {
+    chrome.storage.local.get([REQUESTS_KEY], (result) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
         return;
       }
 
-      const requests = (result[STORAGE_KEY] || []) as StoredRequest[];
+      const requests = (result[REQUESTS_KEY] || []) as StoredRequest[];
       const newRequests = [request, ...requests].slice(0, MAX_STORED_REQUESTS);
 
-      chrome.storage.local.set({ [STORAGE_KEY]: newRequests }, () => {
+      chrome.storage.local.set({ [REQUESTS_KEY]: newRequests }, () => {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError);
         } else {
@@ -57,11 +112,11 @@ export async function storeRequest(request: StoredRequest): Promise<void> {
  */
 export async function getStoredRequests(): Promise<StoredRequest[]> {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.get([STORAGE_KEY], (result) => {
+    chrome.storage.local.get([REQUESTS_KEY], (result) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {
-        resolve((result[STORAGE_KEY] || []) as StoredRequest[]);
+        resolve((result[REQUESTS_KEY] || []) as StoredRequest[]);
       }
     });
   });
@@ -72,7 +127,7 @@ export async function getStoredRequests(): Promise<StoredRequest[]> {
  */
 export async function clearStoredRequests(): Promise<void> {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.remove([STORAGE_KEY], () => {
+    chrome.storage.local.remove([REQUESTS_KEY], () => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {
@@ -88,16 +143,16 @@ export async function clearStoredRequests(): Promise<void> {
  */
 export async function deleteRequest(requestId: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.get([STORAGE_KEY], (result) => {
+    chrome.storage.local.get([REQUESTS_KEY], (result) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
         return;
       }
 
-      const requests = (result[STORAGE_KEY] || []) as StoredRequest[];
+      const requests = (result[REQUESTS_KEY] || []) as StoredRequest[];
       const filtered = requests.filter((r) => r.id !== requestId);
 
-      chrome.storage.local.set({ [STORAGE_KEY]: filtered }, () => {
+      chrome.storage.local.set({ [REQUESTS_KEY]: filtered }, () => {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError);
         } else {
@@ -110,12 +165,6 @@ export async function deleteRequest(requestId: string): Promise<void> {
 
 /**
  * Create stored request object
- * @param type - Request type (rest or graphql)
- * @param url - Request URL
- * @param request - Request details
- * @param response - Response details
- * @param duration - Request duration in ms
- * @returns StoredRequest object
  */
 export function createStoredRequest(
   type: "rest" | "graphql",

@@ -5,16 +5,10 @@
 
 import { logger } from "../utils/logger";
 import {
-  loadSettings as loadIndexedDBSettings,
-  saveSettings as saveIndexedDBSettings,
-} from "../utils/indexedDB";
-
-// Types
-interface DebounceSettings {
-  restUrls: string[];
-  graphqlOperations: string[];
-  debounceDelay: number;
-}
+  DebounceSettings,
+  loadSettings as loadStorageSettings,
+  saveSettings as saveStorageSettings,
+} from "../utils/storage";
 
 // DOM elements
 const toast = document.getElementById("toast") as HTMLDivElement;
@@ -55,7 +49,7 @@ function showToast(
  */
 async function loadSettings(): Promise<void> {
   try {
-    const settings = await loadIndexedDBSettings();
+    const settings = await loadStorageSettings();
 
     if (debounceUrlsTextarea) {
       debounceUrlsTextarea.value = settings.restUrls.join("\n");
@@ -99,7 +93,7 @@ async function saveSettings(): Promise<void> {
       debounceDelay,
     };
 
-    await saveIndexedDBSettings(settings);
+    await saveStorageSettings(settings);
 
     console.log("[Popup] Settings saved:", settings);
     showToast("Settings saved successfully!", "success");
